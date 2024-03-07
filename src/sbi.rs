@@ -1,24 +1,25 @@
+//! SBI call wrappers
 
-/*
-This function is used to print a string to the console.
-*/
-pub fn console_putchar (c : usize) {
+/// use sbi call to putchar in console (qemu uart handler)
+pub fn console_putchar(c: usize) {
     #[allow(deprecated)]
     sbi_rt::legacy::console_putchar(c);
 }
 
-/*
-This function is used to shutdown the system. 
-It takes a failure_code as an argument. 
-If the failure_code is 0, it means the system is shutting down normally. 
-Otherwise, it means the system is shutting down due to a failure. 
-*/
-pub fn shutdown (failure_code : usize) -> ! {
+/// use sbi call to getchar from console (qemu uart handler)
+#[allow(unused)]
+pub fn console_getchar() -> usize {
     #[allow(deprecated)]
-    use sbi_rt::{system_reset,NoReason,Shutdown,SystemFailure};
-    match failure_code {
-        0 => system_reset(Shutdown,NoReason),
-        _ => system_reset(Shutdown,SystemFailure)
-    };
+    sbi_rt::legacy::console_getchar()
+}
+
+/// use sbi call to shutdown the kernel
+pub fn shutdown(failure: bool) -> ! {
+    use sbi_rt::{system_reset, NoReason, Shutdown, SystemFailure};
+    if !failure {
+        system_reset(Shutdown, NoReason);
+    } else {
+        system_reset(Shutdown, SystemFailure);
+    }
     unreachable!()
 }
