@@ -7,8 +7,13 @@
 use crate::drivers::{GPU_DEVICE, KEYBOARD_DEVICE, MOUSE_DEVICE};
 extern crate alloc;
 
+
 #[macro_use]
 extern crate bitflags;
+mod logging;
+
+#[allow(unused_imports)]
+use log::{debug, info, warn, error,trace};
 
 #[path = "boards/qemu.rs"]
 mod board;
@@ -55,22 +60,27 @@ lazy_static! {
 #[no_mangle]
 pub fn rust_main() -> ! {
     clear_bss();
+    // println!("KERN: Hello, World!");
     mm::init();
+    println!("KERN: Back to world!");
+    logging::init();
+    debug!("KERN: memory management initialized");
     UART.init();
-    println!("KERN: init gpu");
+    debug!("KERN: init gpu");
     let _gpu = GPU_DEVICE.clone();
-    println!("KERN: init keyboard");
+    debug!("KERN: init keyboard");
     let _keyboard = KEYBOARD_DEVICE.clone();
-    println!("KERN: init mouse");
+    debug!("KERN: init mouse");
     let _mouse = MOUSE_DEVICE.clone();
-    println!("KERN: init trap");
+    debug!("KERN: init trap");
     trap::init();
     trap::enable_timer_interrupt();
     timer::set_next_trigger();
     board::device_init();
-    fs::list_apps();
+    debug!("KERN: init process");
     task::add_initproc();
     *DEV_NON_BLOCKING_ACCESS.exclusive_access() = true;
+    debug!("KERN: start to run tasks");
     task::run_tasks();
     panic!("Unreachable in rust_main!");
 }

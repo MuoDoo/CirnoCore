@@ -1,4 +1,4 @@
-use crate::fs::{make_pipe, open_file, OpenFlags};
+use crate::fs::{self, make_pipe, open_file, OpenFlags};
 use crate::mm::{translated_byte_buffer, translated_refmut, translated_str, UserBuffer};
 use crate::task::{current_process, current_user_token};
 use alloc::sync::Arc;
@@ -96,4 +96,9 @@ pub fn sys_dup(fd: usize) -> isize {
     let new_fd = inner.alloc_fd();
     inner.fd_table[new_fd] = Some(Arc::clone(inner.fd_table[fd].as_ref().unwrap()));
     new_fd as isize
+}
+
+pub fn sys_ls() -> isize {
+    fs::list_apps();
+    0
 }

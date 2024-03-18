@@ -1,11 +1,7 @@
-/*！
-
-本模块利用 log crate 为你提供了日志功能，使用方式见 main.rs.
-
-*/
-
+/// use log to print log
 use log::{self, Level, LevelFilter, Log, Metadata, Record};
 
+use crate::println;
 struct SimpleLogger;
 
 impl Log for SimpleLogger {
@@ -32,7 +28,7 @@ impl Log for SimpleLogger {
     }
     fn flush(&self) {}
 }
-
+/// init log level
 pub fn init() {
     static LOGGER: SimpleLogger = SimpleLogger;
     log::set_logger(&LOGGER).unwrap();

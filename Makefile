@@ -7,6 +7,8 @@ DISASM_TMP := target/$(TARGET)/$(MODE)/asm
 FS_IMG := ../CirnoUser/target/$(TARGET)/$(MODE)/fs.img
 APPS := ../CirnoUser/src/bin/*
 
+LOG := TRACE
+
 # BOARD
 BOARD := qemu
 SBI ?= rustsbi
@@ -50,7 +52,7 @@ $(KERNEL_BIN): kernel
 fs-img: $(APPS)
 	@cd ../CirnoUser && make build TEST=$(TEST)
 	@rm -f $(FS_IMG)
-	@cd ../easy-fs-fuse && cargo run --release -- -s ../CirnoUser/src/bin/ -t ../CirnoUser/target/riscv64gc-unknown-none-elf/release/
+	@cd ../easy-fs-fuse && cargo run --release -- -s ../CirnoUser/src/bin/ -t ../CirnoUser/target/riscv64gc-unknown-none-elf/release/ -d ../CirnoData/
 
 $(APPS):
 
